@@ -1,0 +1,229 @@
+# This file provisions paid infrastructure when you approve it in Render.
+# Review service plans and region in Render before applying.
+services:
+  - type: web
+    name: fabsexpress-web
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: flask --app wsgi:app db upgrade
+    startCommand: gunicorn -c gunicorn.conf.py wsgi:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "true"
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_TLS
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fabsexpress-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: fabsexpress-cache
+          property: connectionString
+      - key: SECRET_KEY
+        sync: false
+      - key: DATA_ENCRYPTION_KEY
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: LEGAL_NAME
+        sync: false
+      - key: BUSINESS_ADDRESS
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
+      - key: SUPPORT_PHONE
+        sync: false
+      - key: TAX_PIN
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: MPESA_CONSUMER_KEY
+        sync: false
+      - key: MPESA_CONSUMER_SECRET
+        sync: false
+      - key: MPESA_SHORTCODE
+        sync: false
+      - key: MPESA_PASSKEY
+        sync: false
+      - key: DPO_COMPANY_TOKEN
+        sync: false
+      - key: DPO_SERVICE_TYPE
+        sync: false
+      - key: DPO_CALLBACK_SECRET
+        sync: false
+      - key: MAP_TILE_URL
+        sync: false
+      - key: MAP_ATTRIBUTION
+        sync: false
+      - key: MAP_ORIGIN
+        sync: false
+  - type: worker
+    name: fabsexpress-worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python worker.py
+    numInstances: 1
+    envVars:
+      - key: APP_ENV
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: APP_ENV
+      - key: TRUST_PROXY
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: TRUST_PROXY
+      - key: SMTP_PORT
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_PORT
+      - key: SMTP_TLS
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_TLS
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: DATABASE_URL
+      - key: REDIS_URL
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: REDIS_URL
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SECRET_KEY
+      - key: DATA_ENCRYPTION_KEY
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: DATA_ENCRYPTION_KEY
+      - key: PUBLIC_BASE_URL
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: PUBLIC_BASE_URL
+      - key: LEGAL_NAME
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: LEGAL_NAME
+      - key: BUSINESS_ADDRESS
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: BUSINESS_ADDRESS
+      - key: SUPPORT_EMAIL
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SUPPORT_EMAIL
+      - key: SUPPORT_PHONE
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SUPPORT_PHONE
+      - key: TAX_PIN
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: TAX_PIN
+      - key: SMTP_HOST
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_HOST
+      - key: SMTP_USERNAME
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_USERNAME
+      - key: SMTP_PASSWORD
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_PASSWORD
+      - key: SMTP_FROM
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: SMTP_FROM
+      - key: MPESA_CONSUMER_KEY
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MPESA_CONSUMER_KEY
+      - key: MPESA_CONSUMER_SECRET
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MPESA_CONSUMER_SECRET
+      - key: MPESA_SHORTCODE
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MPESA_SHORTCODE
+      - key: MPESA_PASSKEY
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MPESA_PASSKEY
+      - key: DPO_COMPANY_TOKEN
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: DPO_COMPANY_TOKEN
+      - key: DPO_SERVICE_TYPE
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: DPO_SERVICE_TYPE
+      - key: DPO_CALLBACK_SECRET
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: DPO_CALLBACK_SECRET
+      - key: MAP_TILE_URL
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MAP_TILE_URL
+      - key: MAP_ATTRIBUTION
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MAP_ATTRIBUTION
+      - key: MAP_ORIGIN
+        fromService:
+          type: web
+          name: fabsexpress-web
+          envVarKey: MAP_ORIGIN
+  - type: keyvalue
+    name: fabsexpress-cache
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
+
+databases:
+  - name: fabsexpress-db
+    databaseName: fabsexpress
+    user: fabsexpress
+    ipAllowList: []
